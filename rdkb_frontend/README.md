@@ -1,82 +1,69 @@
-# Lightweight React Template for KAVIA
+# RDK-B FWA Frontend (React)
 
-This project provides a minimal React template with a clean, modern UI and minimal dependencies.
+Modern dashboard UI for visualizing, managing, and monitoring Fixed Wireless Access (FWA) devices running RDK-B.
 
-## Features
+- Ocean Professional theme: blue and amber accents, minimalist design
+- Responsive layout with top bar, sidebar, content panels, and modals
+- Integrated with rdkb_backend REST APIs for auth, devices, configuration, monitoring, and admin operations
+- Environment-configurable API base URL and site URL
 
-- **Lightweight**: No heavy UI frameworks - uses only vanilla CSS and React
-- **Modern UI**: Clean, responsive design with KAVIA brand styling
-- **Fast**: Minimal dependencies for quick loading times
-- **Simple**: Easy to understand and modify
+## Quick Start
 
-## Getting Started
+1) Install dependencies
+   npm install
 
-In the project directory, you can run:
+2) Configure environment
+   Create a .env file in rdkb_frontend with:
+   REACT_APP_API_BASE_URL=http://localhost:8000
+   REACT_APP_SITE_URL=http://localhost:3000
 
-### `npm start`
+3) Run
+   npm start
+   App: http://localhost:3000
 
-Runs the app in development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Environment Variables
 
-### `npm test`
+- REACT_APP_API_BASE_URL: Base URL of rdkb_backend (required)
+- REACT_APP_SITE_URL: Public site URL used for redirects (e.g., email linkbacks) (optional but recommended)
 
-Launches the test runner in interactive watch mode.
+You can copy .env.example to .env and adjust.
 
-### `npm run build`
+## Project Structure
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+src/
+  api/           // API client and helpers
+  components/    // Reusable UI components (Topbar, Sidebar, Cards, Modal, etc.)
+  pages/         // Route pages (Login, Dashboard, Devices, DeviceDetail, Config, Monitoring, Admin, NotFound)
+  routes/        // Authenticated routing and guards
+  theme/         // Theme constants and helpers
+  App.js         // App shell with routes
+  index.js       // Entry point
+  App.css        // Global styles (Ocean Professional)
 
-## Customization
+## API Integration
 
-### Colors
+The frontend uses fetch with a small wrapper to:
+- Attach auth token headers
+- Handle JSON parsing and errors
+- Support GET/POST/PUT/DELETE
 
-The main brand colors are defined as CSS variables in `src/App.css`:
+Endpoints are expected from rdkb_backend (FastAPI), discovered via REACT_APP_API_BASE_URL. Adjust paths in src/api/endpoints.js if your backend uses different routes.
 
-```css
-:root {
-  --kavia-orange: #E87A41;
-  --kavia-dark: #1A1A1A;
-  --text-color: #ffffff;
-  --text-secondary: rgba(255, 255, 255, 0.7);
-  --border-color: rgba(255, 255, 255, 0.1);
-}
-```
+## Authentication
 
-### Components
+Basic token-based login is implemented. Tokens are stored in localStorage. A simple guard redirects unauthenticated users to /login.
 
-This template uses pure HTML/CSS components instead of a UI framework. You can find component styles in `src/App.css`. 
+## Theming
 
-Common components include:
-- Buttons (`.btn`, `.btn-large`)
-- Container (`.container`)
-- Navigation (`.navbar`)
-- Typography (`.title`, `.subtitle`, `.description`)
+Ocean Professional theme (primary #2563EB, secondary #F59E0B, background #f9fafb, surface #ffffff, text #111827). Styles are CSS variables and utility classes in App.css. Components use these variables consistently.
 
-## Learn More
+## Scripts
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+- npm start
+- npm run build
+- npm test
 
-### Code Splitting
+## Notes
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- If backend endpoints differ, update src/api/endpoints.js accordingly.
+- For WebSocket-based live telemetry (if available later), add a WS helper in src/api and surface it in Monitoring page.

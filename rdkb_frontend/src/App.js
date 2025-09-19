@@ -1,48 +1,91 @@
-import React, { useState, useEffect } from 'react';
-import logo from './logo.svg';
+import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
+import { ThemeProvider } from './theme/ThemeProvider';
+import Sidebar from './components/layout/Sidebar';
+import Topbar from './components/layout/Topbar';
+import Login from './pages/Login';
+import Dashboard from './pages/Dashboard';
+import Devices from './pages/Devices';
+import DeviceDetail from './pages/DeviceDetail';
+import Config from './pages/Config';
+import Monitoring from './pages/Monitoring';
+import Admin from './pages/Admin';
+import NotFound from './pages/NotFound';
+import { AuthGuard } from './routes/AuthGuard';
 
 // PUBLIC_INTERFACE
 function App() {
-  const [theme, setTheme] = useState('light');
-
-  // Effect to apply theme to document element
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-  }, [theme]);
-
-  // PUBLIC_INTERFACE
-  const toggleTheme = () => {
-    setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
-  };
-
+  /** App shell with Ocean Professional theme and main routes */
   return (
-    <div className="App">
-      <header className="App-header">
-        <button 
-          className="theme-toggle" 
-          onClick={toggleTheme}
-          aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
-        >
-          {theme === 'light' ? '🌙 Dark' : '☀️ Light'}
-        </button>
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <p>
-          Current theme: <strong>{theme}</strong>
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider>
+      <BrowserRouter>
+        <div className="app-shell">
+          <Sidebar />
+          <div className="app-main">
+            <Topbar />
+            <div className="app-content">
+              <Routes>
+                <Route path="/login" element={<Login />} />
+                <Route
+                  path="/"
+                  element={<Navigate to="/dashboard" replace />}
+                />
+                <Route
+                  path="/dashboard"
+                  element={
+                    <AuthGuard>
+                      <Dashboard />
+                    </AuthGuard>
+                  }
+                />
+                <Route
+                  path="/devices"
+                  element={
+                    <AuthGuard>
+                      <Devices />
+                    </AuthGuard>
+                  }
+                />
+                <Route
+                  path="/devices/:id"
+                  element={
+                    <AuthGuard>
+                      <DeviceDetail />
+                    </AuthGuard>
+                  }
+                />
+                <Route
+                  path="/config"
+                  element={
+                    <AuthGuard>
+                      <Config />
+                    </AuthGuard>
+                  }
+                />
+                <Route
+                  path="/monitoring"
+                  element={
+                    <AuthGuard>
+                      <Monitoring />
+                    </AuthGuard>
+                  }
+                />
+                <Route
+                  path="/admin"
+                  element={
+                    <AuthGuard>
+                      <Admin />
+                    </AuthGuard>
+                  }
+                />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </div>
+          </div>
+        </div>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 
